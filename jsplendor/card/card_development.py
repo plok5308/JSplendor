@@ -15,15 +15,15 @@ class Card:
         print('price [w, u, g, r, k]: {}'.format(self.price))
         print('')
 
-def get_all_cards():
+def get_all_development_cards():
     card_list = []
-    card_list.extend(get_level_cards(1))
-    card_list.extend(get_level_cards(2))
-    card_list.extend(get_level_cards(3))
+    card_list.extend(get_level_development_cards(1))
+    card_list.extend(get_level_development_cards(2))
+    card_list.extend(get_level_development_cards(3))
 
     return card_list
 
-def get_level_cards(level):
+def get_level_development_cards(level):
     if level==1:
         data_list = l1_list
     elif level==2:

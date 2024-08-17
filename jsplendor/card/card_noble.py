@@ -1,3 +1,4 @@
+import random
 # price array - [(w)hite, bl(u)e, (g)reen, (r)ed, blac(k)]
 # price array - [w, u, g, r, k]
 
@@ -20,6 +21,9 @@ class NobleCard:
         self.victory_point = victory_point
         self.price = price
 
+    def print(self):
+        print("noble price: {}".format(self.price))
+
 def get_noble_cards():
     noble_cards = []
     for data in noble_list:
@@ -28,3 +32,10 @@ def get_noble_cards():
         noble_cards.append(card)
         
     return noble_cards
+
+def get_three_noble_cards():
+    noble_cards = get_noble_cards()
+    selected_noble_cards = random.sample(noble_cards, 3)
+    return selected_noble_cards
+
+

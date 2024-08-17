@@ -1,6 +1,6 @@
-from jsplendor.card.card_noble import get_noble_cards
+from jsplendor.card import get_noble_cards
 
-def main():
+def test_noble_card():
     cards = get_noble_cards()
 
     price_white = 0
