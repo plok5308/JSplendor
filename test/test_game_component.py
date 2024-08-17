@@ -1,7 +1,7 @@
 from jsplendor.game import Board
 from jsplendor.game import Player
 from jsplendor.card import get_all_development_cards, get_three_noble_cards
-from jsplendor.coin import Coins, get_full_coin_for_board, get_empty_coin
+from jsplendor.coin import get_full_coin_for_board, get_empty_coin
 
 
 def test_game_component():
@@ -30,6 +30,6 @@ def test_game_component():
 
 
 if __name__ == "__main__":
-    main()
+    test_game_component()
 
 

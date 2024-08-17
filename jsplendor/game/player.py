@@ -10,8 +10,7 @@ class Player(GameComponent):
 
         print("The number of development cards: {}".format(len(self.development_cards)))
         print("Noble cards: ")
-        for noble_card in self.noble_cards:
-            noble_card.print()
+        print(self.noble_cards)
         print("Coin status: ")
-        print(self.coins())    
+        print(self.coins)    
         print("")

@@ -50,4 +50,4 @@ def test_development_card():
 
 
 if __name__ == "__main__":
-    main()
+    test_development_card()

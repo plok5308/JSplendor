@@ -2,33 +2,38 @@ import random
 # price array - [(w)hite, bl(u)e, (g)reen, (r)ed, blac(k)]
 # price array - [w, u, g, r, k]
 
-# VP / price 
+# name / VP / price 
 noble_list = [
-    (3, [0, 0, 4, 4, 0]),
-    (3, [3, 0, 0, 3, 3]),
-    (3, [4, 4, 0, 0, 0]),
-    (3, [4, 0, 0, 0, 4]),
-    (3, [0, 4, 4, 0, 0]),
-    (3, [0, 3, 3, 3, 0]),
-    (3, [3, 3, 3, 0, 0]),
-    (3, [0, 0, 0, 4, 4]),
-    (3, [3, 3, 0, 0, 3]),
-    (3, [0, 0, 3, 3, 3]),
+    ('noble1', 3, [0, 0, 4, 4, 0]),
+    ('noble2', 3, [3, 0, 0, 3, 3]),
+    ('noble3', 3, [4, 4, 0, 0, 0]),
+    ('noble4', 3, [4, 0, 0, 0, 4]),
+    ('noble5', 3, [0, 4, 4, 0, 0]),
+    ('noble6', 3, [0, 3, 3, 3, 0]),
+    ('noble7', 3, [3, 3, 3, 0, 0]),
+    ('noble8', 3, [0, 0, 0, 4, 4]),
+    ('noble9', 3, [3, 3, 0, 0, 3]),
+    ('noble10', 3, [0, 0, 3, 3, 3]),
 ]
 
+
 class NobleCard:
-    def __init__(self, victory_point, price):
+    def __init__(self, name, victory_point, price):
+        self.name = name
         self.victory_point = victory_point
         self.price = price
 
-    def print(self):
-        print("noble price: {}".format(self.price))
+    def __repr__(self):
+        return self.name
+
 
 def get_noble_cards():
     noble_cards = []
     for data in noble_list:
-        card = NobleCard(victory_point=data[0],
-                  price=data[1])
+        card = NobleCard(
+            name=data[0],
+            victory_point=data[1],
+            price=data[2])
         noble_cards.append(card)
         
     return noble_cards

@@ -2,11 +2,15 @@ from jsplendor.card.development_list import l1_list, l2_list, l3_list
 
 
 class Card:
-    def __init__(self, level, victory_point, gem_color, price):
+    def __init__(self, name, level, victory_point, gem_color, price):
+        self.name = name
         self.level = level
         self.victory_point = victory_point
         self.gem_color = gem_color
         self.price = price
+
+    def __repr__(self):
+        return self.name
 
     def print_info(self):
         print('level: {}'.format(self.level))
@@ -35,10 +39,12 @@ def get_level_development_cards(level):
     
     card_list = []
     for data in data_list:
-        card = Card(level=data[0],
-             victory_point=data[1],
-             gem_color=data[2],
-             price=data[3])
+        card = Card(
+            name=data[0],
+            level=data[1],
+            victory_point=data[2],
+            gem_color=data[3],
+            price=data[4])
         card_list.append(card)
 
     return card_list

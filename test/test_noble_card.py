@@ -26,4 +26,4 @@ def test_noble_card():
     
 
 if __name__ == "__main__":
-    main()
+    test_noble_card()

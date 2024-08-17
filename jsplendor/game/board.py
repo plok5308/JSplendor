@@ -1,9 +1,22 @@
+import random
+
 from jsplendor.game.abs import GameComponent
 
 class Board(GameComponent):
     def __init__(self, development_cards, noble_cards, coins):
         super().__init__(development_cards, noble_cards, coins)
+        # parameters
+        self.level1_n = 3
+        self.level2_n = 3
+        self.level3_n = 0
+
+        # table information
+        self.table_level1 = []
+        self.table_level2 = []
+        self.table_level3 = []
+
         self._split_development_cards()
+        self._initial_lay_cards_on_table()
 
     def _split_development_cards(self):
         self.level1_cards = []
@@ -20,17 +33,57 @@ class Board(GameComponent):
             else:
                 raise ValueError
             
+    def _initial_lay_cards_on_table(self):
+        # shuffle
+        random.shuffle(self.level1_cards)
+        random.shuffle(self.level2_cards)
+        random.shuffle(self.level3_cards)
+
+        for i in range(self.level1_n):
+            _ = self.lay_level_card_on_table(level=1)
+        for i in range(self.level2_n):
+            _ = self.lay_level_card_on_table(level=2)
+        for i in range(self.level3_n):
+            _ = self.lay_level_card_on_table(level=3)
+
+    def lay_level_card_on_table(self, level):
+        if level==1:
+            total_cards = self.level1_cards
+            table_cards = self.table_level1
+        elif level==2:
+            total_cards = self.level2_cards
+            table_cards = self.table_level2
+        elif level==3:
+            total_cards = self.level3_cards
+            table_cards = self.table_level3
+        else:
+            raise ValueError("check level")
+        if len(total_cards) > 0:
+            table_cards.append(total_cards.pop())
+            return 0
+        else:
+            print('There is no more level{} cards.'.format(level))
+            return -1
+            
     def print_status(self, object_name=None):
         if object_name is not None:
             print("[{}]".format(object_name))
             
-        print("The number of level1 development cards: {}".format(len(self.level1_cards)))
-        print("The number of level2 development cards: {}".format(len(self.level2_cards)))
-        print("The number of level3 development cards: {}".format(len(self.level3_cards)))
         print("Noble cards: ")
-        for noble_card in self.noble_cards:
-            noble_card.print()
+        print(self.noble_cards)
         print("Coin status: ")
-        print(self.coins())    
+        print(self.coins)    
+        print("Table level1: ")
+        print(self.table_level1)
+        print("The remain number of Level1: ")
+        print(len(self.level1_cards))
+        print("Table level2: ")
+        print(self.table_level2)
+        print("The remain number of Level2: ")
+        print(len(self.level2_cards))
+        #print("Table level3: ")
+        #print(self.table_level3)
+        #print("The remain number of Level3: ")
+        #print(len(self.level3_cards))
         print("")
 
