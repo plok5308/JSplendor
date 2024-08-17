@@ -1,4 +1,4 @@
-from jsplendor.card.card_list import l1_list, l2_list, l3_list
+from jsplendor.card.development_list import l1_list, l2_list, l3_list
 
 
 class Card:

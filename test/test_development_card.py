@@ -1,4 +1,4 @@
-from jsplendor.card.card import get_all_cards, get_level_cards
+from jsplendor.card.card_development import get_all_cards, get_level_cards
 
 def main():
     # check level1 cards.
