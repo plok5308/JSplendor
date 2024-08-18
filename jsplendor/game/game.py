@@ -8,36 +8,33 @@ class Game:
         all_development_cards = get_all_development_cards()
         selected_noble_cards = get_three_noble_cards()
         board_coins = get_full_coin_for_board()
-        self.board = Board(development_cards=all_development_cards,
+        self.board = Board(
+                    name="board",
+                    development_cards=all_development_cards,
                     noble_cards=selected_noble_cards,
                     coins=board_coins)
         
         player1_coins = get_empty_coin()
-        self.player1 = Player(development_cards=[],
+        self.player1 = Player(
+                        name="player1",
+                        development_cards=[],
                         noble_cards=[],
                         coins=player1_coins)
         
         self.component_list = [self.board, self.player1]
 
         print("Initial game status")
-        self.board.print_status(object_name="board")
-        self.player1.print_status(object_name="player1")
+        self.print_status()
 
         self.step = 0
         self.check_all_coins()
         self.check_all_cards()
 
+    def print_status(self):
+        self.board.print_status(object_name="board")
+        self.player1.print_status(object_name="player1")
 
     def step(self):
-        pass
-
-    def get_three_coins(self):
-        pass
-
-    def check_getting_coins(self):
-        pass
-
-    def check_getting_cards(self):
         pass
 
     def check_all_coins(self):

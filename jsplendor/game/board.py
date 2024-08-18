@@ -3,8 +3,8 @@ import random
 from jsplendor.game.abs import GameComponent
 
 class Board(GameComponent):
-    def __init__(self, development_cards, noble_cards, coins):
-        super().__init__(development_cards, noble_cards, coins)
+    def __init__(self, name, development_cards, noble_cards, coins):
+        super().__init__(name, development_cards, noble_cards, coins)
         # parameters
         self.level1_n = 3
         self.level2_n = 3
@@ -62,6 +62,7 @@ class Board(GameComponent):
             table_cards.append(total_cards.pop())
             return 0
         else:
+            table_cards.append(None)
             print('There is no more level{} cards.'.format(level))
             return -1
             
