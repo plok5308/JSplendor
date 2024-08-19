@@ -2,13 +2,14 @@ import random
 
 from jsplendor.game.abs import GameComponent
 
+
 class Board(GameComponent):
     def __init__(self, name, development_cards, noble_cards, coins):
         super().__init__(name, development_cards, noble_cards, coins)
         # parameters
-        self.level1_n = 3
-        self.level2_n = 3
-        self.level3_n = 0
+        self.level1_n = 4
+        self.level2_n = 4
+        self.level3_n = 4
 
         # table information
         self.table_level1 = []
@@ -17,6 +18,11 @@ class Board(GameComponent):
 
         self._split_development_cards()
         self._initial_lay_cards_on_table()
+        self._flatten_table_cards()
+
+    def _flatten_table_cards(self):
+        self.flatten_table_cards = self.table_level1 + self.table_level2 + self.table_level3
+        assert(len(self.flatten_table_cards)==12)
 
     def _split_development_cards(self):
         self.level1_cards = []
@@ -65,6 +71,24 @@ class Board(GameComponent):
             table_cards.append(None)
             print('There is no more level{} cards.'.format(level))
             return -1
+
+    def update_table_development_card(self, card):
+        for table_card in self.table_level1:
+            if table_card == card:
+                self.table_level1.remove(table_card)
+                self.lay_level_card_on_table(level=1)
+
+        for table_card in self.table_level2:
+            if table_card == card:
+                self.table_level2.remove(table_card)
+                self.lay_level_card_on_table(level=2)
+
+        for table_card in self.table_level3:
+            if table_card == card:
+                self.table_level3.remove(table_card)
+                self.lay_level_card_on_table(level=3)
+
+        self._flatten_table_cards()
             
     def print_status(self, object_name=None):
         if object_name is not None:
@@ -82,9 +106,9 @@ class Board(GameComponent):
         print(self.table_level2)
         print("The remain number of Level2: ")
         print(len(self.level2_cards))
-        #print("Table level3: ")
-        #print(self.table_level3)
-        #print("The remain number of Level3: ")
-        #print(len(self.level3_cards))
+        print("Table level3: ")
+        print(self.table_level3)
+        print("The remain number of Level3: ")
+        print(len(self.level3_cards))
         print("")
 

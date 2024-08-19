@@ -7,9 +7,11 @@ def test_board():
     all_development_cards = get_all_development_cards()
     selected_noble_cards = get_three_noble_cards()
     board_coins = get_full_coin_for_board()
-    board = Board(development_cards=all_development_cards,
-                  noble_cards=selected_noble_cards,
-                  coins=board_coins)
+    board = Board(
+                name="board",
+                development_cards=all_development_cards,
+                noble_cards=selected_noble_cards,
+                coins=board_coins)
     
     res_sum = 0
     for i in range(40):

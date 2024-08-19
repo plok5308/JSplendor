@@ -8,19 +8,25 @@ def test_game_component():
     all_development_cards = get_all_development_cards()
     selected_noble_cards = get_three_noble_cards()
     board_coins = get_full_coin_for_board()
-    board = Board(development_cards=all_development_cards,
-                  noble_cards=selected_noble_cards,
-                  coins=board_coins)
+    board = Board(
+                name="board",
+                development_cards=all_development_cards,
+                noble_cards=selected_noble_cards,
+                coins=board_coins)
     
     player1_coins = get_empty_coin()
-    player1 = Player(development_cards=[],
-                     noble_cards=[],
-                     coins=player1_coins)
+    player1 = Player(
+                name="player1",
+                development_cards=[],
+                noble_cards=[],
+                coins=player1_coins)
     
     player2_coins = get_empty_coin()
-    player2 = Player(development_cards=[],
-                     noble_cards=[],
-                     coins=player2_coins)
+    player2 = Player(
+                name="player2",
+                development_cards=[],
+                noble_cards=[],
+                coins=player2_coins)
     
     board.print_status(object_name="board")
     player1.print_status(object_name="player1")
