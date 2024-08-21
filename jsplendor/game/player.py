@@ -169,15 +169,19 @@ class Player(GameComponent):
                 board.noble_cards.remove(card)
                 if self.verbose:
                     print('Get {} card.'.format(card))
+                board.noble_cards.append(None)
 
     def is_get_possible_noble_card(self, card):
-        price = card.price
-        gem_status = self.sum_development_card_gem
-        is_possible = True
-        for i in range(5):
-            if gem_status[i] < price[i]:
-                is_possible = False
-                break
+        if card is None:
+            is_possible = False
+        else:
+            price = card.price
+            gem_status = self.sum_development_card_gem
+            is_possible = True
+            for i in range(5):
+                if gem_status[i] < price[i]:
+                    is_possible = False
+                    break
 
         return is_possible
 

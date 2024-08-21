@@ -47,6 +47,25 @@ class Game:
         else:
             pass
 
+    def run_with_action(self, action):
+        actions_bool = self.player1.get_all_possible_actions(self.board)
+
+        if actions_bool[action]:
+            victory_point = self.player1.do_action(self.board, action)
+            reward = 0
+
+            if victory_point > 15:
+                is_done = True
+            else:
+                is_done = False
+
+        else:
+            # invalid action
+            reward = -1
+            is_done = False
+
+        return reward, is_done
+
     def run_step(self):
         self.step += 1
         if self.verbose:
