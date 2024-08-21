@@ -4,8 +4,8 @@ from jsplendor.game.abs import GameComponent
 
 
 class Board(GameComponent):
-    def __init__(self, name, development_cards, noble_cards, coins):
-        super().__init__(name, development_cards, noble_cards, coins)
+    def __init__(self, name, development_cards, noble_cards, coins, verbose):
+        super().__init__(name, development_cards, noble_cards, coins, verbose)
         # parameters
         self.level1_n = 4
         self.level2_n = 4

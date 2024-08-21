@@ -1,10 +1,10 @@
 from jsplendor.game import Game
 
 def main():
-    game = Game()
+    game = Game(verbose=True)
     episode_log = []
     number_of_games = 10
-    step_n = 100
+    step_n = 1000
 
     for i in range(number_of_games):
         game.reset()
@@ -15,6 +15,8 @@ def main():
                 break
 
     print(episode_log)
+    termination_rate = len(episode_log) / number_of_games
+    print('termination rate: {}'.format(termination_rate))
     print('done')
     
 

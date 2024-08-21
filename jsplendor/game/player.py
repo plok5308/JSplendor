@@ -3,11 +3,18 @@ import numpy as np
 from jsplendor.game.abs import GameComponent
 from jsplendor.utils import Element
 from jsplendor.game.utils import adjust_price, get_coin_comb
+from jsplendor.coin import sum_coins
 
+
+# TODO:
+# drop coin if player has over ten coins. 
+# drop rule:
+# sum elements of level1 and level2 of development cards on the table.
+# drop the lowest element token.
 
 class Player(GameComponent):
-    def __init__(self, name, development_cards, noble_cards, coins):
-        super().__init__(name, development_cards, noble_cards, coins)
+    def __init__(self, name, development_cards, noble_cards, coins, verbose):
+        super().__init__(name, development_cards, noble_cards, coins, verbose)
         self.n_coin_action = 10
         self.n_buy_action = 12
         self.num_actions = self.n_coin_action + self.n_buy_action
@@ -30,6 +37,7 @@ class Player(GameComponent):
     def do_action(self, board, action):
         if action < self.n_coin_action:
             self.get_coins(board, action)
+            self.drop_over_coins(board)
         else:
             self.buy_development_card(board, action-self.n_coin_action)
 
@@ -65,9 +73,48 @@ class Player(GameComponent):
         if board.coins[color] > 0:
             board.coins[color] -= 1
             self.coins[color] += 1
-            print('{} get a {} coin.'.format(self.name, color))
+            if self.verbose:
+                print('{} get a {} coin.'.format(self.name, color))
         else:
             pass
+
+    def has_a_coin(self, color):
+        if self.coins[color] > 0:
+            return True
+        else:
+            return False
+
+    def drop_over_coins(self, board):
+        sum_v = sum_coins(self.coins)
+
+        while (sum_v > 10):
+            if self.verbose:
+                print('{} has over coins.'.format(self.name))
+                print(self.coins)
+            self.drop_unnecessary_coin(board)
+            sum_v = sum_coins(self.coins)
+
+    def drop_unnecessary_coin(self, board):
+        price_sum = np.zeros(5, dtype=int)
+
+        #table_cards = board.table_level1 + board.table_level2
+        table_cards = board.table_level1
+        for card in table_cards:
+            price_sum += np.array(card.price)
+        
+        
+        idx_array = np.argsort(price_sum)
+        for idx in idx_array:
+            color = Element(idx).name
+            if self.has_a_coin(color):
+                self.drop_a_coin(board, color)
+                break
+
+    def drop_a_coin(self, board, color):
+        board.coins[color] += 1
+        self.coins[color] -= 1
+        if self.verbose:
+            print('{} drop a {} coin.'.format(self.name, color))
 
     def is_possible_to_buy(self, board, card_position):
         card = board.flatten_table_cards[card_position]
@@ -103,7 +150,8 @@ class Player(GameComponent):
             self.development_cards.append(card)
             self._update_score()
             
-            print('{} get a {} card.'.format(self.name, card))
+            if self.verbose:
+                print('{} get a {} card.'.format(self.name, card))
 
             board.update_table_development_card(card)
 
@@ -111,14 +159,16 @@ class Player(GameComponent):
             self._update_score()
 
         else:
-            print('Not enough tokens.')
+            if self.verbose:
+                print('Not enough tokens.')
 
     def update_noble_cards(self, board):
         for card in board.noble_cards:
             if self.is_get_possible_noble_card(card):
                 self.noble_cards.append(card)
                 board.noble_cards.remove(card)
-                print('Get {} card.'.format(card))
+                if self.verbose:
+                    print('Get {} card.'.format(card))
 
     def is_get_possible_noble_card(self, card):
         price = card.price

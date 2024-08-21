@@ -23,3 +23,10 @@ def get_empty_coin():
     coins = get_coin_dictionary()
     return coins
     
+def sum_coins(coins: dict):
+    sum_v = 0
+    for key, value in coins.items():
+        sum_v += value
+
+    return sum_v
+

@@ -7,7 +7,8 @@ from jsplendor.card import get_all_development_cards, get_three_noble_cards
 from jsplendor.coin import get_full_coin_for_board, get_empty_coin
 
 class Game:
-    def __init__(self):
+    def __init__(self, verbose = True):
+        self.verbose = verbose
         self.reset()
 
     def reset(self):
@@ -18,18 +19,21 @@ class Game:
                     name="board",
                     development_cards=all_development_cards,
                     noble_cards=selected_noble_cards,
-                    coins=board_coins)
+                    coins=board_coins,
+                    verbose=self.verbose)
         
         player1_coins = get_empty_coin()
         self.player1 = Player(
                         name="player1",
                         development_cards=[],
                         noble_cards=[],
-                        coins=player1_coins)
+                        coins=player1_coins,
+                        verbose=self.verbose)
         
         self.component_list = [self.board, self.player1]
 
-        print("Initial game status")
+        if self.verbose:
+            print("Initial game status")
         self.print_status()
 
         self.step = 0
@@ -37,18 +41,23 @@ class Game:
         self.check_all_cards()
 
     def print_status(self):
-        #self.board.print_status(object_name="board")
-        self.player1.print_status(object_name="player1")
+        if self.verbose:
+            self.board.print_status(object_name="board")
+            self.player1.print_status(object_name="player1")
+        else:
+            pass
 
     def run_step(self):
         self.step += 1
-        print("[step {}]".format(self.step))
+        if self.verbose:
+            print("[step {}]".format(self.step))
         actions_bool = self.player1.get_all_possible_actions(self.board)
 
         indices = np.where(actions_bool == 1)[0]
 
         if len(indices)==0:
-            print('There is no possible action.')
+            if self.verbose:
+                print('There is no possible action.')
         else:
             action = np.random.choice(indices)
             victory_point = self.player1.do_action(self.board, action)
