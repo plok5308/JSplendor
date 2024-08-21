@@ -59,12 +59,14 @@ class Game:
             else:
                 is_done = False
 
+            is_skip = False
         else:
             # invalid action
-            reward = -1
+            reward = 0
             is_done = False
+            is_skip = True
 
-        return reward, is_done
+        return reward, is_done, is_skip
 
     def run_step(self):
         self.step += 1

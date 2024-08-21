@@ -27,7 +27,7 @@ def get_observation_space():
 
     # 6 + 5 + 1 + (6 * 12) + (6 * 3)= 102
 
-    observation_space = spaces.Box(low=0, high=30, shape=(102,), dtype=np.uint8)
+    observation_space = spaces.Box(low=0, high=30, shape=(102,), dtype=np.int32)
     return observation_space
 
 def get_observation(game: Game):
@@ -41,6 +41,7 @@ def get_observation(game: Game):
     obs4 = get_table_cards_obs(board)
 
     obs = np.concatenate([obs1, obs2, obs3, obs4])
+    obs = obs.astype(np.int32)
 
     return obs
 

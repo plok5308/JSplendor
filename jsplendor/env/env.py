@@ -12,19 +12,36 @@ class JsplendorEnv(gym.Env):
         self.action_space = spaces.Discrete(action_n)
         self.observation_space = get_observation_space()
         self.verbose = verbose
+        self.step_log = 0
+        self.skip_sum = 0
 
     def step(self, action):
-        reward, is_done = self.game.run_with_action(action)
+        self.step_log += 1
+        reward, is_done, is_skip = self.game.run_with_action(action)
+        self.skip_sum += is_skip
 
         terminated = False
         truncated = False
 
         if is_done:
-            terminated = True
-            reward = 10
+            reward = (200 - self.step_log) / 10
+            print('player reach the 15 VP at step {}.'.format(self.step_log))
+            print('skip ratio: {}.'.format(self.skip_sum / self.step_log))
+            print('reward: {}'.format(reward))
 
-        if self.game.step > 100:
-            truncated = True
+            terminated = True
+
+            self.step_log = 0
+            self.skip_sum = 0
+        elif self.step_log > 300:
+            reward = -10
+            print('reward: {}'.format(reward))
+            terminated = True
+            #truncated = True
+            self.step_log = 0
+            self.skip_sum = 0
+        else:
+            pass
 
         observation = get_observation(self.game)
         info = dict()
