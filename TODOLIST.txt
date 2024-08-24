@@ -1,3 +1,0 @@
-# TODO list
-1. train the agent and check that I can reduce the ending step number.
-2. code refactoring 

@@ -5,10 +5,17 @@ from jsplendor.game import Board
 from jsplendor.game import Player
 from jsplendor.card import get_all_development_cards, get_three_noble_cards
 from jsplendor.coin import get_full_coin_for_board, get_empty_coin
+from jsplendor.utils import get_verbose_dict
+
 
 class Game:
-    def __init__(self, verbose = True):
-        self.verbose = verbose
+    def __init__(self, verbose_dict=None):
+        if verbose_dict is None:
+            self.verbose_dict = get_verbose_dict()
+        else:
+            self.verbose_dict = verbose_dict
+
+        self.verbose = self.verbose_dict['game']
         self.reset()
 
     def reset(self):
@@ -20,7 +27,7 @@ class Game:
                     development_cards=all_development_cards,
                     noble_cards=selected_noble_cards,
                     coins=board_coins,
-                    verbose=self.verbose)
+                    verbose=self.verbose_dict['board'])
         
         player1_coins = get_empty_coin()
         self.player1 = Player(
@@ -28,13 +35,13 @@ class Game:
                         development_cards=[],
                         noble_cards=[],
                         coins=player1_coins,
-                        verbose=self.verbose)
+                        verbose=self.verbose_dict['player'])
         
         self.component_list = [self.board, self.player1]
 
         if self.verbose:
             print("Initial game status")
-        self.print_status()
+            self.print_status()
 
         self.step = 0
         self.check_all_coins()
@@ -42,57 +49,32 @@ class Game:
 
     def print_status(self):
         if self.verbose:
-            self.board.print_status(object_name="board")
-            self.player1.print_status(object_name="player1")
+            if self.verbose_dict['board']:
+                self.board.print_status(object_name="board")
+            if self.verbose_dict['player']:
+                self.player1.print_status(object_name="player1")
         else:
             pass
 
     def run_with_action(self, action):
+        action_result = dict()
+        action_result['victory_point'] = 0
+        action_result['over_coin_count'] = 0
+        action_result['is_skip'] = False
+        action_result['is_get_card'] = False
+
         actions_bool = self.player1.get_all_possible_actions(self.board)
 
         if actions_bool[action]:
-            victory_point = self.player1.do_action(self.board, action)
-            reward = 0
+            victory_point, over_coin_count, get_card = self.player1.do_action(self.board, action)
+            action_result['victory_point'] = victory_point
+            action_result['over_coin_count'] = over_coin_count
+            action_result['get_card'] = get_card
 
-            if victory_point > 15:
-                is_done = True
-            else:
-                is_done = False
+        else:  # invalid action
+            action_result['is_skip'] = True
 
-            is_skip = False
-        else:
-            # invalid action
-            reward = 0
-            is_done = False
-            is_skip = True
-
-        return reward, is_done, is_skip
-
-    def run_step(self):
-        self.step += 1
-        if self.verbose:
-            print("[step {}]".format(self.step))
-        actions_bool = self.player1.get_all_possible_actions(self.board)
-
-        indices = np.where(actions_bool == 1)[0]
-
-        if len(indices)==0:
-            if self.verbose:
-                print('There is no possible action.')
-        else:
-            action = np.random.choice(indices)
-            victory_point = self.player1.do_action(self.board, action)
-
-            if victory_point > 15:
-                is_done = True
-            else:
-                is_done = False
-
-        self.print_status()
-        self.check_all_coins()
-        self.check_all_cards()
-
-        return is_done
+        return action_result
 
     def check_all_coins(self):
         sum_white = 0
