@@ -2,21 +2,36 @@ import torch
 from stable_baselines3 import PPO
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.callbacks import EvalCallback
+from stable_baselines3.common.vec_env import SubprocVecEnv
+from stable_baselines3.common.utils import set_random_seed
 
 from jsplendor.env import JsplendorEnv
 from jsplendor.utils import get_verbose_dict
 
-def main():
+def make_env(rank: int, seed: int=0):
     train_verbose_dict = get_verbose_dict()
+
+    def _init():
+        env = JsplendorEnv(train_verbose_dict)
+        env.reset(seed=seed+rank)
+        return env
+
+    set_random_seed(seed)
+    return _init
+
+def main():
     eval_verbose_dict = get_verbose_dict()
     eval_verbose_dict['player'] = True
+    num_cpu = 8
 
-    train_env = JsplendorEnv(train_verbose_dict)
+    #train_env = JsplendorEnv(train_verbose_dict)
+    train_env = SubprocVecEnv([make_env(i) for i in range(num_cpu)])
+
     eval_env = JsplendorEnv(eval_verbose_dict)
-    exp = 'int32_refactoring'
+    exp = 'int32_get_card_reward_bug_fix'
     eval_log_dir = 'logs/{}'.format(exp)
 
-    train_steps = 10000000
+    train_steps = 100000000
     eval_freq = 10000
 
     eval_callback = EvalCallback(

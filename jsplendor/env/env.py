@@ -1,3 +1,4 @@
+import numpy as np
 import gymnasium as gym
 from gymnasium import spaces
 
@@ -44,6 +45,8 @@ class JsplendorEnv(gym.Env):
             terminated = True
         else:
             reward, terminated = self._run_action(action)
+            if self.verbose:
+                print('reward: {}'.format(reward))
 
         observation = get_observation(self.game)
         info = dict()
@@ -63,7 +66,8 @@ class JsplendorEnv(gym.Env):
             self.skip_sum += 1
             reward = -1 * self.penalty['invalid']
             if self.verbose:
-                print('is skip. reward: {}'.format(reward))
+            #    print('is skip. reward: {}'.format(reward))
+                print('is skip.')
 
         else:
             if action_result['victory_point'] >= self.target_vp:
@@ -71,14 +75,14 @@ class JsplendorEnv(gym.Env):
                 if self.verbose:
                     print('player reach the VP at step {}.'.format(self.step_log))
                     print('skip ratio: {}.'.format(self.skip_sum / self.step_log))
-                    print('reward: {}'.format(reward))
+#                    print('reward: {}'.format(reward))
 
                 terminated = True
 
             else:
                 reward = 0
-                if self.verbose:
-                    print('reward: {}'.format(reward))
+#                if self.verbose:
+ #                   print('reward: {}'.format(reward))
 
         # adjust reward
         if action_result['is_get_card']:
@@ -90,6 +94,7 @@ class JsplendorEnv(gym.Env):
         return reward, terminated
 
     def reset(self, seed=None, options=None):
+        np.random.seed(seed)
         self.step_log = 0
         self.skip_sum = 0
         self.game.reset()

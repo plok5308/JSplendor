@@ -69,7 +69,7 @@ class Game:
             victory_point, over_coin_count, get_card = self.player1.do_action(self.board, action)
             action_result['victory_point'] = victory_point
             action_result['over_coin_count'] = over_coin_count
-            action_result['get_card'] = get_card
+            action_result['is_get_card'] = get_card
 
         else:  # invalid action
             action_result['is_skip'] = True

@@ -8,11 +8,11 @@ class Element(Enum):
     BLACK=4
     GOLD=5
 
-def get_verbose_dict():
+def get_verbose_dict(default:bool = False):
     verbose_dict = dict()
-    verbose_dict['env'] = False
-    verbose_dict['game'] = False
-    verbose_dict['board'] = False
-    verbose_dict['player'] = False
+    verbose_dict['env'] = default
+    verbose_dict['game'] = default
+    verbose_dict['board'] = default
+    verbose_dict['player'] = default
 
     return verbose_dict
