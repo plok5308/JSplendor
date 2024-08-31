@@ -3,3 +3,6 @@
 
 pip install torch torchvision torchaudio
 pip install stable_baselines[extra]
+pip install x-transformers
+pip install h5py
+pip install lightning

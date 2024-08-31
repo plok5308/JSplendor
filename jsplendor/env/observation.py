@@ -30,13 +30,14 @@ def get_observation_space():
 
     # 1 + 6 + 5 + 1 + (6 * 12) + (6 * 3)= 102
 
-    observation_space = spaces.Box(low=0, high=30, shape=(103,), dtype=np.int32)
+    observation_space = spaces.Box(low=0, high=255, shape=(104,), dtype=np.int32)
     return observation_space
 
 def get_observation(game: Game):
     player1 = game.player1
     board = game.board
 
+    obs_start = get_start_obs()
     obs0 = get_step_obs(game)
     obs1 = get_coin_obs(player1)
     obs2 = get_player_development_obs(player1)
@@ -44,15 +45,19 @@ def get_observation(game: Game):
 
     obs4 = get_table_cards_obs(board)
 
-    obs = np.concatenate([obs0, obs1, obs2, obs3, obs4])
+    obs = np.concatenate([obs_start, obs0, obs1, obs2, obs3, obs4])
     obs = obs.astype(np.int32)
 
     return obs
 
+def get_start_obs():
+    x = np.ones(1, dtype=np.int32)
+    return x
+
 def get_step_obs(game):
-    x = np.zeros(1, dtype=np.int32)
-#    x[0] = game.step / 300
+    x = np.zeros(1, dtype=np.int32)  # max 300
     x[0] = game.step
+    assert(x[0] < 256)
 
     return x
 
@@ -61,8 +66,6 @@ def get_coin_obs(player):
     x = np.zeros(6, dtype=np.int32)
     for key, value in coins.items():
         x[Element[key].value] = value
-
-#    x = x/4
 
     return x
 
@@ -103,7 +106,7 @@ def get_table_cards_obs(board):
 
 def get_table_card_obs(card):
     if card is None:
-        x = np.ones(6, dtype=np.int32) * -1
+        x = np.ones(6, dtype=np.int32) * 255
 
     else:
         x = np.zeros(6, dtype=np.int32)

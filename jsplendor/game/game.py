@@ -56,7 +56,16 @@ class Game:
         else:
             pass
 
+    def get_random_action_datas(self):  # for collecting data
+        actions_bool = self.player1.get_all_possible_actions(self.board)
+        possible_actions = np.where(actions_bool==1)[0].tolist()
+        action = random.choice(possible_actions)
+        action_result = self.run_with_action(action)
+
+        return action, action_result, actions_bool
+
     def run_with_action(self, action):
+        self.step += 1
         action_result = dict()
         action_result['victory_point'] = 0
         action_result['over_coin_count'] = 0

@@ -24,7 +24,7 @@ class JsplendorEnv(gym.Env):
 
         # parameters
         self.target_vp = 1
-        self.max_step = 100
+        self.max_step = 127
         self.penalty = dict()
         self.penalty['invalid'] = 0.1
         self.penalty['over_coin'] = 0.1
