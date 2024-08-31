@@ -17,7 +17,7 @@ def save_data(filename, total_obs, total_actions):
 
 def main(args):
     game = Game()
-    data_n = 1000000
+    data_n = 10000
     limit_victory_point = 20
 
     init_obs = get_observation(game)

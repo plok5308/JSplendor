@@ -83,11 +83,11 @@ def main():
                  tensorboard_log=exp_log)
 
 
-    dataset = HDF5Dataset('test.h5')
-    train_dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
+    dataset = HDF5Dataset('data/data_0.h5')
+    train_dataloader = DataLoader(dataset, batch_size=256, shuffle=True)
 
-    dataset2 = HDF5Dataset('test.h5')
-    valid_dataloader = DataLoader(dataset, batch_size=32)
+    dataset2 = HDF5Dataset('data/data_valid.h5')
+    valid_dataloader = DataLoader(dataset, batch_size=256)
 
 
     system = LitModel(model.policy)
@@ -98,7 +98,6 @@ def main():
                 valid_dataloader,
                 )
 
-    import pdb; pdb.set_trace()
     print('done')
 
 
