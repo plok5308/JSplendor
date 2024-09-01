@@ -71,6 +71,7 @@ class Game:
         action_result['over_coin_count'] = 0
         action_result['is_skip'] = False
         action_result['is_get_card'] = False
+        action_result['step'] = self.step
 
         actions_bool = self.player1.get_all_possible_actions(self.board)
 

@@ -2,9 +2,11 @@ import torch
 from torch import optim
 from torch.utils.data import Dataset, DataLoader
 from torchmetrics.classification import BinaryAccuracy
+import numpy as np
 import h5py
 from stable_baselines3 import PPO
 import lightning as L
+from lightning.pytorch.callbacks import ModelCheckpoint
 
 from jsplendor.env import JsplendorEnv, FeatureExtractor, get_observation_space
 
@@ -14,7 +16,8 @@ class LitModel(L.LightningModule):
         super().__init__()
         self.model = model
         self.loss = torch.nn.BCELoss()
-        self.acc = BinaryAccuracy()
+        self.train_acc = BinaryAccuracy()
+        self.valid_acc = BinaryAccuracy()
 
     def training_step(self, batch, batch_idx):
         obs = batch[0]
@@ -26,6 +29,9 @@ class LitModel(L.LightningModule):
         y4 = torch.sigmoid(y3)
 
         loss = self.loss(y4, actions_bool)
+        acc = self.train_acc(y4, actions_bool)
+        self.log('train_loss', loss, prog_bar=True)
+        self.log('train_acc', acc, prog_bar=True)
 
         return loss
 
@@ -38,8 +44,10 @@ class LitModel(L.LightningModule):
         y3 = self.model.action_net(y2)
         y4 = torch.sigmoid(y3)
 
-        acc = self.acc(y4, actions_bool)
-        self.log('acc', acc, prog_bar=True)
+        loss = self.loss(y4, actions_bool)
+        acc = self.valid_acc(y4, actions_bool)
+        self.log('valid_loss', loss, prog_bar=True)
+        self.log('valid_acc', acc, prog_bar=True)
 
     def configure_optimizers(self):
         optimizer = optim.Adam(self.parameters(), lr=1e-3)
@@ -47,10 +55,21 @@ class LitModel(L.LightningModule):
 
 
 class HDF5Dataset(Dataset):
-    def __init__(self, hdf5_file):
-        self.file = h5py.File(hdf5_file, 'r')
-        self.obs = self.file['obs']
-        self.actions_bool = self.file['actions_bool']
+    def __init__(self, hdf5_file_list):
+        for idx, hdf5_file in enumerate(hdf5_file_list):
+            datas = h5py.File(hdf5_file, 'r')
+            obs = datas['obs']
+            actions_bool = datas['actions_bool']
+
+            if idx==0:
+                full_obs = obs
+                full_actions_bool = actions_bool
+            else:
+                full_obs = np.concatenate([full_obs, obs], axis=0)
+                full_actions_bool = np.concatenate([full_actions_bool, actions_bool], axis=0)
+
+        self.obs = full_obs
+        self.actions_bool = full_actions_bool
 
     def __len__(self):
         return len(self.obs)
@@ -83,16 +102,40 @@ def main():
                  tensorboard_log=exp_log)
 
 
-    dataset = HDF5Dataset('data/data_0.h5')
-    train_dataloader = DataLoader(dataset, batch_size=256, shuffle=True)
+    train_files = [
+        'data/data_0.h5',
+        'data/data_1.h5',
+        'data/data_2.h5',
+        'data/data_3.h5',
+    ]
 
-    dataset2 = HDF5Dataset('data/data_valid.h5')
-    valid_dataloader = DataLoader(dataset, batch_size=256)
+    valid_files = [
+        'data/data_10.h5',
+    ]
 
+    num_workers = 8
+    train_dataset = HDF5Dataset(train_files)
+    train_dataloader = DataLoader(train_dataset, batch_size=512, shuffle=True, num_workers=num_workers)
+
+    valid_dataset = HDF5Dataset(valid_files)
+    valid_dataloader = DataLoader(valid_dataset, batch_size=512, num_workers=num_workers)
+
+    checkpoint_callback = ModelCheckpoint(
+            monitor='valid_acc',
+            save_top_k=3,
+            filename='{epoch}-{valid_acc}',
+            mode='max'
+            )
 
     system = LitModel(model.policy)
+#    state_dict = torch.load('./ckpt/e120.ckpt')['state_dict']
+#    system.load_state_dict(state_dict)
+#    print('load ckpt file.')
 
-    trainer = L.Trainer()
+    trainer = L.Trainer(
+            val_check_interval=0.1, 
+            callbacks=checkpoint_callback)
+
     trainer.fit(system, 
                 train_dataloader,
                 valid_dataloader,

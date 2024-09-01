@@ -172,6 +172,8 @@ class Player(GameComponent):
             self.update_noble_cards(board)
             self._update_score()
             get_card = True
+            if self.verbose:
+                print('VP: {}.'.format(self.sum_victory_point))
 
         else:
             if self.verbose:

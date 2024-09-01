@@ -16,17 +16,25 @@ def save_data(filename, total_obs, total_actions):
 
 
 def main(args):
+    np.random.seed(int(args.idx))
     game = Game()
     data_n = 10000
     limit_victory_point = 20
 
     init_obs = get_observation(game)
-    total_obs = np.zeros((data_n, len(init_obs)))
-    total_actions = np.zeros((data_n, game.player1.num_actions))
+    total_obs = np.zeros((data_n, len(init_obs)), dtype=np.int32)
+    total_actions = np.zeros((data_n, game.player1.num_actions), dtype=np.int32)
 
     for i in tqdm(range(data_n)):
         obs = get_observation(game)
+
         action, action_result, possible_actions = game.get_random_action_datas()
+        obs = obs.astype(np.int32)
+        possible_actions = possible_actions.astype(np.int32)
+
+        buy_cards = possible_actions[10:22]
+        if np.sum(buy_cards) > 0:
+            possible_actions[0:10] = 0
 
         total_obs[i] = obs
         total_actions[i] = possible_actions
